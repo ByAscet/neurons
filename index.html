@@ -3,211 +3,149 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#0a0d12">
-<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#050505">
+<meta name="color-scheme" content="dark light">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Нейроны">
-<meta name="format-detection" content="telephone=no">
 <title>Нейроны человека · 228</title>
 <style>
-:root{
-  --bg:#0a0d12;
-  --text:#e9eef5;
-  --muted:#8892a4;
-  --soft:#c6cfdb;
-  --accent:#4fd1c5;
-  --accent2:#f0b566;
-  --accent3:#a78bfa;
-  --safe-t:env(safe-area-inset-top,0px);
-  --safe-b:env(safe-area-inset-bottom,0px);
+:root {
+  /* Темная тема (по умолчанию) */
+  --bg: #050505;
+  --text: #e0e0e0;
+  --muted: #888888;
+  --accent-line: rgba(255, 255, 255, 0.15);
+  --vignette: rgba(0, 0, 0, 0.85);
+  --grain-opacity: 0.05;
+  --watermark: rgba(255, 255, 255, 0.04);
+  --icon-filter: invert(1);
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{
-  height:100%;overflow:hidden;background:var(--bg);color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Inter',system-ui,sans-serif;
-  -webkit-font-smoothing:antialiased;
-  overscroll-behavior:none;
-  touch-action:manipulation;
-  user-select:none;-webkit-user-select:none;
-  -webkit-text-size-adjust:100%;
-}
-html,body{height:100dvh}
-#stage{position:fixed;inset:0;overflow:hidden}
 
-.slide{
-  position:absolute;inset:0;
-  display:flex;flex-direction:column;
-  justify-content:center;
-  padding:calc(var(--safe-t) + 3.5rem) 1.35rem calc(var(--safe-b) + 5.5rem) 1.35rem;
-  opacity:0;visibility:hidden;
-  transform:translate3d(0,0,0);
-  transition:opacity .45s ease, transform .6s cubic-bezier(.22,.7,.22,1);
-  will-change:opacity,transform;
+body.light-mode {
+  /* Светлая тема (бумага/архив) */
+  --bg: #f0f0f0;
+  --text: #111111;
+  --muted: #555555;
+  --accent-line: rgba(0, 0, 0, 0.15);
+  --vignette: rgba(255, 255, 255, 0.6);
+  --grain-opacity: 0.03;
+  --watermark: rgba(0, 0, 0, 0.04);
+  --icon-filter: invert(0);
 }
-.slide.active{opacity:1;visibility:visible}
-.slide::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none}
-.bg-0::before{background:
-  radial-gradient(120% 60% at 10% 8%, rgba(79,209,197,.13), transparent 60%),
-  radial-gradient(120% 60% at 95% 95%, rgba(167,139,250,.10), transparent 60%)}
-.bg-1::before{background:
-  radial-gradient(120% 60% at 95% 8%, rgba(240,181,102,.12), transparent 60%),
-  radial-gradient(120% 60% at 5% 95%, rgba(79,209,197,.09), transparent 60%)}
-.bg-2::before{background:
-  radial-gradient(120% 60% at 50% 98%, rgba(167,139,250,.13), transparent 60%),
-  radial-gradient(120% 60% at 15% 5%, rgba(79,209,197,.08), transparent 60%)}
-.bg-3::before{background:
-  radial-gradient(120% 60% at 8% 55%, rgba(79,209,197,.11), transparent 60%),
-  radial-gradient(120% 60% at 95% 30%, rgba(240,181,102,.09), transparent 60%)}
 
-.inner{position:relative;z-index:1;max-width:100%;width:100%}
-.kicker{
-  font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;
-  color:var(--accent);margin-bottom:.9rem;font-weight:600;
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body {
+  height: 100%; overflow: hidden; background: var(--bg); color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  transition: background-color 0.6s ease, color 0.6s ease;
+  user-select: none; -webkit-user-select: none;
+  touch-action: manipulation;
 }
-.title{
-  font-size:clamp(1.45rem,7.2vw,2.15rem);
-  font-weight:600;letter-spacing:-.015em;
-  line-height:1.18;margin-bottom:1.2rem;color:#f2f6fb;
-}
-.body p{
-  font-size:clamp(.94rem,4.05vw,1.06rem);
-  line-height:1.62;color:var(--soft);
-  margin-bottom:.72rem;
-  padding-left:.85rem;
-  position:relative;
-}
-.body p::before{
-  content:"";position:absolute;left:0;top:.72em;
-  width:.4rem;height:1px;background:var(--accent);opacity:.7;
-}
-.body p:first-child{color:var(--text)}
-.body p:last-child{margin-bottom:0}
 
-/* Анимация появления */
-.kicker,.title,.body p{opacity:0}
-.slide.active .kicker{animation:rise .55s .05s both}
-.slide.active .title{animation:rise .7s .13s both}
-.slide.active .body p:nth-child(1){animation:rise .65s .26s both}
-.slide.active .body p:nth-child(2){animation:rise .65s .36s both}
-.slide.active .body p:nth-child(3){animation:rise .65s .46s both}
-.slide.active .body p:nth-child(4){animation:rise .65s .56s both}
-.slide.active .body p:nth-child(5){animation:rise .65s .66s both}
-@keyframes rise{from{opacity:0;transform:translate3d(0,14px,0)}to{opacity:1;transform:none}}
+/* Кинематографичные эффекты */
+#film-grain {
+  position: fixed; inset: 0; z-index: 10; pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  transition: opacity 0.6s ease;
+}
 
-/* HUD */
-.progress{
-  position:fixed;top:0;left:0;right:0;
-  height:calc(var(--safe-t) + 3px);
-  padding-top:var(--safe-t);
-  background:transparent;z-index:6;pointer-events:none;
+#vignette {
+  position: fixed; inset: 0; z-index: 9; pointer-events: none;
+  box-shadow: inset 0 0 160px 60px var(--vignette);
+  transition: box-shadow 0.6s ease;
 }
-.progress-bar{
-  height:3px;width:0;
-  background:linear-gradient(90deg,var(--accent),var(--accent3));
-  transition:width .45s cubic-bezier(.22,.7,.22,1);
-  border-radius:0 2px 2px 0;
-}
-.hud{
-  position:fixed;
-  top:calc(var(--safe-t) + .55rem);
-  left:0;right:0;
-  display:flex;justify-content:space-between;align-items:center;
-  padding:0 1.15rem;
-  font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--muted);z-index:5;pointer-events:none;
-}
-.hud .section{color:var(--accent);font-weight:600;max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hud .counter{font-variant-numeric:tabular-nums;font-weight:500}
 
-/* Нижняя панель */
-.nav{
-  position:fixed;left:0;right:0;
-  bottom:0;
-  padding:.7rem 1rem calc(var(--safe-b) + .7rem) 1rem;
-  display:flex;gap:.6rem;align-items:center;
-  background:linear-gradient(to top, rgba(10,13,18,.92), rgba(10,13,18,0));
-  z-index:7;
-  pointer-events:none;
+/* Водяной знак */
+.watermark {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg);
+  font-size: 15vw; font-weight: 700; letter-spacing: 0.1em; white-space: nowrap;
+  color: var(--watermark); z-index: 0; pointer-events: none;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  transition: color 0.6s ease;
 }
-.nav > *{pointer-events:auto}
-.btn{
-  flex:1;
-  height:2.6rem;
-  border-radius:1.3rem;
-  border:1px solid rgba(255,255,255,.08);
-  background:rgba(255,255,255,.04);
-  color:var(--text);
-  font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
-  display:flex;align-items:center;justify-content:center;
-  transition:background .2s, transform .12s, border-color .2s;
-  font-family:inherit;
-  -webkit-appearance:none;
-}
-.btn:active{transform:scale(.97);background:rgba(79,209,197,.14);border-color:rgba(79,209,197,.4)}
-.btn:disabled{opacity:.3}
-.btn.icon{
-  flex:0 0 2.6rem;font-size:1rem;letter-spacing:0;
-}
-.slider{
-  flex:1;
-  height:2.6rem;
-  display:flex;align-items:center;gap:.4rem;
-  color:var(--muted);font-size:.62rem;letter-spacing:.18em;
-  font-variant-numeric:tabular-nums;
-  justify-content:center;
-}
-.slider b{color:var(--text);font-weight:600;font-size:.7rem}
 
-/* Тап-зоны (невидимые) */
-.tapzones{position:fixed;inset:0;z-index:4;display:flex}
-.tapzones > div{flex:1}
-.tapzones .l{flex:0 0 30%}
-.tapzones .r{flex:0 0 30%}
-.tapzones .c{flex:1;pointer-events:none}
-
-/* Индикатор свайпа — минимальный */
-.swipe-hint{
-  position:fixed;left:50%;transform:translateX(-50%);
-  bottom:calc(var(--safe-b) + 4.2rem);
-  font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;
-  color:rgba(136,146,164,.5);z-index:6;pointer-events:none;
-  transition:opacity .5s ease;
-  white-space:nowrap;
+/* Контент */
+#stage { position: fixed; inset: 0; z-index: 2; overflow: hidden; }
+.slide {
+  position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center;
+  padding: calc(env(safe-area-inset-top, 0px) + 4rem) 2rem calc(env(safe-area-inset-bottom, 0px) + 4rem) 2rem;
+  opacity: 0; visibility: hidden; transform: translateY(10px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
 }
-.swipe-hint.fade{opacity:0}
+.slide.active { opacity: 1; visibility: visible; transform: translateY(0); }
+
+.inner { position: relative; z-index: 1; max-width: 100%; width: 100%; }
+
+.kicker {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 1.2rem; font-weight: 500;
+}
+
+.title {
+  font-size: clamp(1.6rem, 8vw, 2.6rem);
+  font-weight: 400; line-height: 1.1; margin-bottom: 1.8rem;
+  border-bottom: 1px solid var(--accent-line); padding-bottom: 1rem;
+}
+
+.body p {
+  font-size: clamp(1rem, 4.2vw, 1.15rem);
+  line-height: 1.65; color: var(--text); margin-bottom: 0.9rem;
+  text-align: justify;
+}
+
+/* Настройки (Шестеренка) */
+.settings-btn {
+  position: fixed; top: calc(env(safe-area-inset-top, 0px) + 1rem); right: 1.5rem;
+  width: 44px; height: 44px; z-index: 20;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent; border: none; cursor: pointer;
+  opacity: 0.5; transition: opacity 0.3s, transform 0.4s;
+}
+.settings-btn:active { transform: rotate(90deg); opacity: 1; }
+.settings-btn svg {
+  width: 24px; height: 24px; stroke: var(--text);
+  fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+  transition: stroke 0.6s ease;
+}
+
+/* Клик-зоны для навигации */
+.click-zones { position: fixed; inset: 0; z-index: 5; display: flex; }
+.click-zones > div { height: 100%; }
+.zone-left { width: 30%; }
+.zone-right { width: 30%; margin-left: auto; }
+.zone-center { width: 40%; pointer-events: none; }
 </style>
 </head>
 <body>
-<div class="progress"><div class="progress-bar" id="pb"></div></div>
-<header class="hud">
-  <div class="section" id="sect">Пролог</div>
-  <div class="counter"><span id="cur">1</span> / <span id="tot">228</span></div>
-</header>
+
+<div class="watermark">NEURON</div>
+<div id="vignette"></div>
+<div id="film-grain"></div>
+
+<button class="settings-btn" id="theme-toggle" aria-label="Сменить тему">
+  <svg viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="3"></circle>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+  </svg>
+</button>
 
 <main id="stage"></main>
 
-<div class="tapzones" id="tapzones">
-  <div class="l" data-dir="-1"></div>
-  <div class="c"></div>
-  <div class="r" data-dir="1"></div>
+<div class="click-zones">
+  <div class="zone-left" id="btn-prev"></div>
+  <div class="zone-center"></div>
+  <div class="zone-right" id="btn-next"></div>
 </div>
-
-<div class="swipe-hint" id="hint">Свайп ← → · тап по краям</div>
-
-<nav class="nav">
-  <button class="btn icon" id="prev" aria-label="Назад">‹</button>
-  <div class="slider"><span id="chapter">Пролог</span></div>
-  <button class="btn icon" id="next" aria-label="Вперёд">›</button>
-</nav>
 
 <script>
 /* ================================
    ДАННЫЕ: 228 слайдов
    ================================ */
 const slides = [
-/* 1—8 · Пролог */
 {s:"Пролог",t:"Нейроны человека",b:[
 "228 слайдов о клетках, из которых соткано всё, что мы называем собой.",
 "От лягушачьих лапок Гальвани до архитектур современной кибербезопасности.",
@@ -238,14 +176,12 @@ const slides = [
 "Изучая её, мы перенимаем принципы устойчивости и адаптации."]},
 {s:"Пролог",t:"Как читать эту презентацию",b:[
 "Каждый слайд — одна мысль, один слой глубины.",
-"Свайп влево — вперёд, вправо — назад. Тап по краям экрана делает то же.",
+"Клик слева — назад, клик справа — вперёд.",
 "Не торопитесь: темп важнее скорости."]},
-
-/* 9—30 · Истоки */
 {s:"Истоки",t:"Первые представления о мозге",b:[
 "Древние египтяне считали сердце вместилищем разума, а мозг — «наполнителем черепа».",
 "Мозг упоминался в папирусах Эдвина Смита около 1700 года до н. э.",
-"Но системного знания о нейронах не было ещё тысячелетия."]},
+"Но системного знания о нейронах не было ещё тысячелетие."]},
 {s:"Истоки",t:"Гиппократ и мозг",b:[
 "V век до н. э.: Гиппократ помещает источник ощущений и мыслей в мозг.",
 "Он отделяет эпилепсию от «божественного» и связывает её с мозгом.",
@@ -338,8 +274,6 @@ const slides = [
 "К середине XX века нейрон описан как электрическая клетка.",
 "Появляется соблазн: а можно ли его смоделировать?",
 "Ответ придёт из кибернетики."]},
-
-/* 31—50 · Кибернетика */
 {s:"Кибернетика",t:"Что такое кибернетика",b:[
 "Наука об управлении и связи в живых и машинах.",
 "Название происходит от греческого «кормчий».",
@@ -420,8 +354,6 @@ const slides = [
 "После него создаётся CERT — команда реагирования на инциденты.",
 "Безопасность становится отдельной дисциплиной.",
 "Ошибка в коде может стоить миллионов."]},
-
-/* 51—65 · Анатомия */
 {s:"Анатомия",t:"Строение нейрона",b:[
 "Тело клетки, дендриты, аксон и синаптические окончания.",
 "Каждая часть выполняет свою роль в потоке сигнала.",
@@ -482,8 +414,6 @@ const slides = [
 "Аксо-дендритные, аксо-соматические, аксо-аксональные.",
 "Химические и электрические.",
 "Каждый тип — своя логика передачи."]},
-
-/* 66—83 · Электрофизиология */
 {s:"Электрофизиология",t:"Ионные каналы",b:[
 "Белковые поры в мембране.",
 "Избирательно пропускают Na⁺, K⁺, Ca²⁺ или Cl⁻.",
@@ -556,8 +486,6 @@ const slides = [
 "Аутоиммунное заболевание, атакующее миелин.",
 "Симптомы: слабость, нарушение координации, зрения.",
 "Пример того, как важен каждый слой изоляции."]},
-
-/* 84—100 · Синапс */
 {s:"Синапс",t:"Химический синапс",b:[
 "Сигнал передаётся через нейротрансмиттеры.",
 "Медленнее электрического, но гибче.",
@@ -626,8 +554,6 @@ const slides = [
 "Нейротрансмиттер возвращается в пресинаптическую клетку.",
 "Так сигнал быстро прекращается.",
 "Мишень многих лекарств и антидепрессантов."]},
-
-/* 101—112 · Нейротрансмиттеры */
 {s:"Нейротрансмиттеры",t:"Классификация",b:[
 "Аминокислоты, моноамины, пептиды, газы, липиды.",
 "Более 100 известных молекул.",
@@ -676,8 +602,6 @@ const slides = [
 "Ретроградные медиаторы — работают «назад».",
 "Модулируют синаптическую пластичность.",
 "Связаны с болью, памятью и аппетитом."]},
-
-/* 113—129 · Типы и глия */
 {s:"Типы нейронов",t:"Классификации",b:[
 "По числу отростков, по функции, по медиатору.",
 "По форме и расположению в мозге.",
@@ -746,8 +670,6 @@ const slides = [
 "Миелинизируют аксоны в периферической нервной системе.",
 "Одна клетка — один сегмент одного аксона.",
 "Способствуют регенерации нервов."]},
-
-/* 130—146 · Мозг */
 {s:"Мозг и сети",t:"Мозг: обзор",b:[
 "Масса около 1,4 кг, объём около 1,2 л.",
 "Содержит 86 миллиардов нейронов и столько же глии.",
@@ -816,8 +738,6 @@ const slides = [
 "Образование новых нейронов во взрослом мозге.",
 "Подтверждён в гиппокампе и обонятельной системе.",
 "Влияет на память и настроение."]},
-
-/* 147—160 · Сенсорика и познание */
 {s:"Сенсорика",t:"Зрение",b:[
 "Свет попадает на сетчатку и возбуждает фоторецепторы.",
 "Сигнал идёт через зрительный нерв в таламус.",
@@ -874,8 +794,6 @@ const slides = [
 "Одна из самых трудных научных загадок.",
 "Связывают с интеграцией информации в коре.",
 "Нейронные корреляты сознания активно изучаются."]},
-
-/* 161—175 · Нейровычисления */
 {s:"Нейровычисления",t:"Нейрон как вычислитель",b:[
 "Принимает входы, суммирует, сравнивает с порогом.",
 "Выдаёт бинарный или частотный выход.",
@@ -936,8 +854,6 @@ const slides = [
 "Связи идут не только вперёд, но и назад.",
 "Обеспечивают память и динамику.",
 "Основа для моделирования коры."]},
-
-/* 176—192 · ИИ */
 {s:"ИИ",t:"От нейрона к перцептрону",b:[
 "Формальный нейрон → обучаемый классификатор.",
 "Розенблатт показал, что машина может учиться.",
@@ -1006,8 +922,6 @@ const slides = [
 "Гибрид квантовых вычислений и нейросетей.",
 "Пока в ранней стадии.",
 "Потенциал для оптимизации и криптографии."]},
-
-/* 193—215 · Кибербезопасность */
 {s:"Кибербезопасность",t:"Что такое кибербезопасность",b:[
 "Защита систем, сетей и данных от атак.",
 "Включает конфиденциальность, целостность, доступность.",
@@ -1104,8 +1018,6 @@ const slides = [
 "Нейробиология, ИИ и безопасность сходятся.",
 "Понимание нейрона помогает строить защиту.",
 "Понимание атак помогает моделировать мозг."]},
-
-/* 216—228 · Будущее */
 {s:"Будущее",t:"Нейроинтерфейсы",b:[
 "Устройства, связывающие мозг и компьютер.",
 "Инвазивные и неинвазивные.",
@@ -1161,24 +1073,12 @@ const slides = [
 ];
 
 /* ================================
-   РЕНДЕР И ЛОГИКА
+   ЛОГИКА
    ================================ */
-const stage   = document.getElementById('stage');
-const totEl   = document.getElementById('tot');
-const curEl   = document.getElementById('cur');
-const sectEl  = document.getElementById('sect');
-const chapter = document.getElementById('chapter');
-const pb      = document.getElementById('pb');
-const hint    = document.getElementById('hint');
-const prevBtn = document.getElementById('prev');
-const nextBtn = document.getElementById('next');
-const zones   = document.querySelectorAll('.tapzones > div[data-dir]');
-
-totEl.textContent = slides.length;
-
+const stage = document.getElementById('stage');
 const nodes = slides.map((s,i)=>{
   const el = document.createElement('section');
-  el.className = 'slide bg-' + (i % 4);
+  el.className = 'slide';
   const ps = s.b.map(l => `<p>${l}</p>`).join('');
   el.innerHTML = `<div class="inner">
     <div class="kicker">${s.s}</div>
@@ -1189,101 +1089,51 @@ const nodes = slides.map((s,i)=>{
   return el;
 });
 
-/* Мягкий prefetch соседних слайдов, чтобы анимация была плавной */
-nodes.forEach(n=>{ n.style.backfaceVisibility='hidden'; });
-
 let idx = 0;
-const STORE_KEY = 'neuro-slide-idx';
+const STORE_KEY = 'noir-neuro-idx';
 
-function show(i, save=true){
+function show(i){
   i = Math.max(0, Math.min(slides.length-1, i));
   nodes.forEach((n,k)=>{ if(k!==i) n.classList.remove('active'); });
   nodes[i].classList.add('active');
   idx = i;
-  curEl.textContent   = i+1;
-  sectEl.textContent  = slides[i].s;
-  chapter.textContent = slides[i].s;
-  pb.style.width = ((i+1)/slides.length*100).toFixed(2) + '%';
-  prevBtn.disabled = i===0;
-  nextBtn.disabled = i===slides.length-1;
-  if(save){ try{ localStorage.setItem(STORE_KEY, String(i)); }catch(e){} }
+  try{ localStorage.setItem(STORE_KEY, String(i)); }catch(e){}
 }
 
-/* Восстановление позиции */
 let restored = 0;
 try{ restored = parseInt(localStorage.getItem(STORE_KEY)||'0',10)||0; }catch(e){}
-show(restored, false);
+show(restored);
 
-/* Кнопки */
-prevBtn.addEventListener('click', ()=> show(idx-1));
-nextBtn.addEventListener('click', ()=> show(idx+1));
+/* Навигация кликами */
+document.getElementById('btn-prev').addEventListener('click', ()=> show(idx-1));
+document.getElementById('btn-next').addEventListener('click', ()=> show(idx+1));
 
-/* Тап-зоны */
-zones.forEach(z=>{
-  z.addEventListener('click', e=>{
-    e.stopPropagation();
-    const dir = parseInt(z.dataset.dir,10);
-    show(idx + dir);
-    hideHint();
-  });
-});
-
-/* Свайпы — pointer events для единой обработки touch/mouse */
-let sx=0, sy=0, st=0, tracking=false;
-const SWIPE_MIN = 42;         /* минимальный сдвиг по X, px */
-const SWIPE_MAX_Y = 70;       /* ограничение по Y, чтобы вертикальный скролл не мешал */
-const SWIPE_TIME = 700;       /* окно времени, мс */
-
-stage.addEventListener('pointerdown', e=>{
-  tracking = true;
-  sx = e.clientX; sy = e.clientY; st = performance.now();
-}, {passive:true});
-
-stage.addEventListener('pointerup', e=>{
-  if(!tracking) return;
-  tracking = false;
-  const dx = e.clientX - sx;
-  const dy = e.clientY - sy;
-  const dt = performance.now() - st;
-  if(dt > SWIPE_TIME) return;
-  if(Math.abs(dx) < SWIPE_MIN) return;
-  if(Math.abs(dy) > SWIPE_MAX_Y) return;
-  show(idx + (dx < 0 ? 1 : -1));
-  hideHint();
-});
-
-stage.addEventListener('pointercancel', ()=>{ tracking=false; });
-
-/* Клавиатура — для десктопной проверки */
+/* Клавиатура (для десктопа) */
 document.addEventListener('keydown', e=>{
-  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); show(idx+1); hideHint(); }
-  else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); show(idx-1); hideHint(); }
-  else if(e.key==='Home'){ e.preventDefault(); show(0); hideHint(); }
-  else if(e.key==='End'){ e.preventDefault(); show(slides.length-1); hideHint(); }
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); show(idx+1); }
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); show(idx-1); }
 });
 
-/* Подсказка исчезает после первого действия */
-let hinted = false;
-function hideHint(){ if(!hinted){ hinted = true; hint.classList.add('fade'); } }
-setTimeout(hideHint, 7000);
+/* Смена темы */
+const themeBtn = document.getElementById('theme-toggle');
+let isLight = false;
+try { isLight = localStorage.getItem('noir-theme') === 'light'; } catch(e) {}
 
-/* Запрет двойного тапа-зума (iOS) */
-let lastTouch = 0;
-document.addEventListener('touchend', e=>{
-  const now = Date.now();
-  if(now - lastTouch < 320) e.preventDefault();
-  lastTouch = now;
-}, {passive:false});
+if (isLight) {
+  document.body.classList.add('light-mode');
+}
 
-/* Предотвращение bounce (pull-to-refresh) */
-document.addEventListener('touchmove', e=>{
+themeBtn.addEventListener('click', (e) => {
+  e.stopPropagation(); // чтобы не перелистывался слайд
+  document.body.classList.toggle('light-mode');
+  isLight = document.body.classList.contains('light-mode');
+  try { localStorage.setItem('noir-theme', isLight ? 'light' : 'dark'); } catch(e) {}
+});
+
+/* Блокировка случайного зума и скролла на iOS */
+document.addEventListener('touchmove', e => {
   if(e.touches.length === 1) e.preventDefault();
 }, {passive:false});
-
-/* При возврате на вкладку — снова показать текущий слайд (iOS восстанавливает скролл) */
-document.addEventListener('visibilitychange', ()=>{
-  if(!document.hidden) show(idx, false);
-});
 </script>
 </body>
 </html>
